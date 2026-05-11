@@ -1,16 +1,19 @@
 import type {
   Academy,
+  AcademyCompetition,
   Announcement,
   Badge,
   ClassSession,
   CoachEngagementSummary,
   CurriculumPath,
+  MonthlyFocus,
   PracticeAssignment,
   PrivateTrainingCoach,
   ProgressStats,
   QuestionThread,
   SkillChecklistItem,
   StudentRow,
+  TodayCalendarClass,
   User,
   Video,
   WeeklyActivity,
@@ -539,3 +542,94 @@ export function getClassById(id: string) {
 export function getVideoById(id: string) {
   return videos.find((v) => v.id === id);
 }
+
+/** Schedule rows for the calendar-first /today page (does not replace `classes`). */
+export const todayCalendarClasses: TodayCalendarClass[] = [
+  {
+    id: "cls-kids-sat",
+    title: "Kids Jiu-Jitsu",
+    audience: "Ages 5–12",
+    type: "gi",
+    level: "kids",
+    coach: "Coach Rivera",
+    duration: 60,
+    scheduledAt: "2026-05-10T09:00:00",
+    color: "#1D9E75",
+    todayFocus:
+      "Breakfalls and hip escapes — staying safe when taken down",
+    rsvpd: false,
+  },
+  {
+    id: "cls-beginner-sat",
+    title: "Beginner Jiu-Jitsu",
+    audience: "16+ · All welcome",
+    type: "gi",
+    level: "beginner",
+    coach: "Coach Rivera",
+    duration: 90,
+    scheduledAt: "2026-05-10T10:30:00",
+    color: "#185FA5",
+    todayFocus:
+      "Single leg takedown — entry, finish, and what to do if they sprawl",
+    rsvpd: true,
+  },
+  {
+    id: "cls-open-sat",
+    title: "Open Mat",
+    audience: "All belts",
+    type: "gi-nogi",
+    level: "all",
+    coach: "Coach Lee",
+    duration: 120,
+    scheduledAt: "2026-05-10T12:00:00",
+    color: "#854F0B",
+    todayFocus:
+      "Competition team — prioritise drilling takedowns. Others free roll.",
+    rsvpd: false,
+  },
+  {
+    id: "cls-advanced-mon",
+    title: "Advanced Jiu-Jitsu",
+    audience: "Blue belt+",
+    type: "gi",
+    level: "advanced",
+    coach: "Coach Rivera",
+    duration: 90,
+    scheduledAt: "2026-05-12T18:30:00",
+    color: "#534AB7",
+    todayFocus: "Guard passing sequences — knee cut to torreando chain",
+    rsvpd: false,
+  },
+];
+
+export const monthlyFocus: MonthlyFocus = {
+  month: "May 2026",
+  theme: "Takedowns & leg attacks",
+  description:
+    "This month we are building our takedown game from the outside and finishing with inside heel hooks and kneebars.",
+};
+
+export const competitions: AcademyCompetition[] = [
+  {
+    id: "comp-1",
+    name: "IBJJF Arizona Open",
+    location: "Phoenix Convention Center",
+    date: "2026-05-28T08:00:00",
+    type: "Gi divisions",
+    signedUp: true,
+    registrationCloses: "2026-05-20",
+    signUpUrl: "https://ibjjf.com",
+    notes: "Weight & age divisions open",
+  },
+  {
+    id: "comp-2",
+    name: "Grappling Industries Phoenix",
+    location: "Lone Butte Casino",
+    date: "2026-06-21T08:00:00",
+    type: "No-Gi",
+    signedUp: false,
+    registrationCloses: "2026-06-14",
+    signUpUrl: "https://grapplingindustries.com",
+    notes: null,
+  },
+];

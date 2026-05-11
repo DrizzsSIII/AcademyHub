@@ -186,3 +186,36 @@ export interface CoachEngagementSummary {
   recapsPostedThisWeek: number;
   questionsAnswered: number;
 }
+
+/** Calendar-first schedule entries used on the /today page only. */
+export interface TodayCalendarClass {
+  id: string;
+  title: string;
+  audience: string;
+  type: "gi" | "nogi" | "gi-nogi";
+  level: string;
+  coach: string;
+  duration: number;
+  scheduledAt: string;
+  color: string;
+  todayFocus: string;
+  rsvpd: boolean;
+}
+
+export interface MonthlyFocus {
+  month: string;
+  theme: string;
+  description: string;
+}
+
+export interface AcademyCompetition {
+  id: string;
+  name: string;
+  location: string;
+  date: string;
+  type: string;
+  signedUp: boolean;
+  registrationCloses: string;
+  signUpUrl: string;
+  notes: string | null;
+}

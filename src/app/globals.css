@@ -8,6 +8,17 @@
   --page-bg: #f9fafb;
   --ink: #1a1a1a;
   --muted: #6b7280;
+  /* Today / schedule tokens */
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f3f4f6;
+  --color-background-tertiary: #eef2f6;
+  --color-border-tertiary: rgba(0, 0, 0, 0.08);
+  --color-border-secondary: rgba(0, 0, 0, 0.12);
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #6b7280;
+  --color-text-success: #1d9e75;
+  --color-text-warning: #b45309;
+  --border-radius-lg: 12px;
 }
 
 html,
