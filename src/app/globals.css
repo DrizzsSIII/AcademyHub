@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #0d1b2a;
+  --color-accent: #d4a017;
+  --page-bg: #f9fafb;
+  --ink: #1a1a1a;
+  --muted: #6b7280;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background-color: var(--page-bg);
+  color: var(--ink);
+}
+
+@layer utilities {
+  .card-surface {
+    @apply rounded-xl border border-black/[0.1] bg-white shadow-card;
+  }
+}
