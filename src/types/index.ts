@@ -208,6 +208,46 @@ export interface MonthlyFocus {
   description: string;
 }
 
+// ─── Study sessions (video review & preparation) ─────────────────────────────
+
+export interface MobilityExercise {
+  name: string;
+  /** Plain-language instruction. Should not imply partner work. */
+  description: string;
+  durationMinutes: number;
+}
+
+/**
+ * A coach-assigned study session tied to a past class recap.
+ * Focused on video review, reflection, and preparation — not solo partner drilling.
+ */
+export interface StudySession {
+  id: string;
+  title: string;
+  /** Short descriptor, e.g. "Guard Passing · Gi · Beginner" */
+  subtitle: string;
+  classId: string;
+  /** Human-readable date, e.g. "May 2, 2026" */
+  classDate: string;
+  dueDate: string;
+  status: AssignmentStatus;
+  coachId: string;
+  coachName: string;
+  videoYoutubeId: string;
+  videoDurationSeconds: number;
+  summary: string;
+  keyDetails: string[];
+  commonMistakes: string[];
+  /** Specific cues to look for while watching the video. */
+  watchFor: string[];
+  /** A reflection prompt to think about before the next class. */
+  reflectionQuestion: string;
+  /** Optional personal note from the coach to this student. */
+  coachNotes?: string;
+  /** Optional solo-safe movement / stretching. Always marked optional. */
+  mobilityWork?: MobilityExercise[];
+}
+
 export interface AcademyCompetition {
   id: string;
   name: string;

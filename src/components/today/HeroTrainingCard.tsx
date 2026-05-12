@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ChevronRight } from "lucide-react";
-import { todayCalendarClasses } from "@/data/mock";
+import { mockNow, todayCalendarClasses } from "@/data/mock";
 import type { TodayCalendarClass } from "@/types";
 
 function formatScheduleType(t: TodayCalendarClass["type"]) {
@@ -14,7 +14,7 @@ function formatScheduleType(t: TodayCalendarClass["type"]) {
 export default function HeroTrainingCard() {
   const [openId, setOpenId] = useState<string | null>(null);
 
-  const today = new Date();
+  const today = mockNow;
   const dateLabel = today.toLocaleDateString("en-US", {
     weekday: "short",
     month: "short",
