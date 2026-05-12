@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { academyTheme } from "@/lib/theme";
 import type { UserRole } from "@/types";
+import { HomeLogoLink } from "./HomeLogoLink";
 import { PoweredByBadge } from "./PoweredByBadge";
 
 import type { ReactNode } from "react";
@@ -105,12 +106,7 @@ export function Sidebar({ role }: SidebarProps) {
   return (
     <aside className="hidden h-full w-64 shrink-0 flex-col border-r border-black/[0.08] bg-white md:flex">
       <div className="flex items-center gap-3 px-4 py-5">
-        <div
-          className="flex h-10 w-10 items-center justify-center rounded-xl text-sm font-bold text-white"
-          style={{ backgroundColor: "var(--color-primary)" }}
-        >
-          {academyTheme.logoInitials}
-        </div>
+        <HomeLogoLink />
         <div className="min-w-0">
           <p className="truncate text-sm font-semibold text-ink">
             {academyTheme.appDisplayName}

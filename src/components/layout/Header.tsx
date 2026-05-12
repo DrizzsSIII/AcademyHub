@@ -1,6 +1,6 @@
 "use client";
 
-import { academyTheme } from "@/lib/theme";
+import { HomeLogoLink } from "./HomeLogoLink";
 
 type HeaderProps = {
   title: string;
@@ -11,13 +11,16 @@ export function Header({ title, subtitle }: HeaderProps) {
   return (
     <header className="sticky top-0 z-30 border-b border-black/[0.08] bg-page/90 backdrop-blur-md">
       <div className="flex items-center justify-between gap-3 px-4 py-3 md:px-8 md:py-4">
-        <div className="min-w-0">
-          <p className="truncate text-lg font-semibold tracking-tight text-ink md:text-xl">
-            {title}
-          </p>
-          {subtitle ? (
-            <p className="truncate text-sm text-muted">{subtitle}</p>
-          ) : null}
+        <div className="flex min-w-0 items-center gap-3">
+          <HomeLogoLink />
+          <div className="min-w-0">
+            <p className="truncate text-lg font-semibold tracking-tight text-ink md:text-xl">
+              {title}
+            </p>
+            {subtitle ? (
+              <p className="truncate text-sm text-muted">{subtitle}</p>
+            ) : null}
+          </div>
         </div>
         <div className="flex shrink-0 items-center gap-2">
           <button
@@ -28,13 +31,6 @@ export function Header({ title, subtitle }: HeaderProps) {
             <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-[color:var(--color-accent)]" />
             <BellIcon />
           </button>
-          <div
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-sm font-semibold text-white"
-            style={{ backgroundColor: "var(--color-primary)" }}
-            title={academyTheme.appDisplayName}
-          >
-            AJ
-          </div>
         </div>
       </div>
     </header>
