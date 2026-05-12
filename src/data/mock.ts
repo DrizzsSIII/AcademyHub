@@ -544,7 +544,7 @@ export function getVideoById(id: string) {
 }
 
 /** Schedule rows for the calendar-first /today page (does not replace `classes`). */
-export const todayCalendarClasses: TodayCalendarClass[] = [
+const baseTodayCalendarClasses: TodayCalendarClass[] = [
   {
     id: "cls-kids-sat",
     title: "Kids Jiu-Jitsu",
@@ -600,6 +600,104 @@ export const todayCalendarClasses: TodayCalendarClass[] = [
     todayFocus: "Guard passing sequences — knee cut to torreando chain",
     rsvpd: false,
   },
+];
+
+function calendarDate(year: number, month: number, day: number, hour: number, minute = 0) {
+  const d = new Date(year, month - 1, day, hour, minute, 0, 0);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:00`;
+}
+
+function saturdaySessions(dateKey: string, suffix: string): TodayCalendarClass[] {
+  const [year, month, day] = dateKey.split("-").map(Number);
+  return [
+    {
+      id: `cls-kids-sat-${suffix}`,
+      title: "Kids Jiu-Jitsu",
+      audience: "Ages 5–12",
+      type: "gi",
+      level: "kids",
+      coach: "Coach Rivera",
+      duration: 60,
+      scheduledAt: calendarDate(year, month, day, 9),
+      color: "#1D9E75",
+      todayFocus: "Breakfalls and hip escapes — staying safe when taken down",
+      rsvpd: false,
+    },
+    {
+      id: `cls-beginner-sat-${suffix}`,
+      title: "Beginner Jiu-Jitsu",
+      audience: "16+ · All welcome",
+      type: "gi",
+      level: "beginner",
+      coach: "Coach Rivera",
+      duration: 90,
+      scheduledAt: calendarDate(year, month, day, 10, 30),
+      color: "#185FA5",
+      todayFocus: "Single leg takedown — entry, finish, and what to do if they sprawl",
+      rsvpd: false,
+    },
+    {
+      id: `cls-open-sat-${suffix}`,
+      title: "Open Mat",
+      audience: "All belts",
+      type: "gi-nogi",
+      level: "all",
+      coach: "Coach Lee",
+      duration: 120,
+      scheduledAt: calendarDate(year, month, day, 12),
+      color: "#854F0B",
+      todayFocus: "Competition team — prioritise drilling takedowns. Others free roll.",
+      rsvpd: false,
+    },
+  ];
+}
+
+function mondaySession(dateKey: string, suffix: string): TodayCalendarClass {
+  const [year, month, day] = dateKey.split("-").map(Number);
+  return {
+    id: `cls-advanced-mon-${suffix}`,
+    title: "Advanced Jiu-Jitsu",
+    audience: "Blue belt+",
+    type: "gi",
+    level: "advanced",
+    coach: "Coach Rivera",
+    duration: 90,
+    scheduledAt: calendarDate(year, month, day, 18, 30),
+    color: "#534AB7",
+    todayFocus: "Guard passing sequences — knee cut to torreando chain",
+    rsvpd: false,
+  };
+}
+
+const recurringScheduleDates = [
+  "2026-04-26",
+  "2026-04-28",
+  "2026-05-03",
+  "2026-05-05",
+  "2026-05-17",
+  "2026-05-19",
+  "2026-05-24",
+  "2026-05-26",
+  "2026-05-31",
+  "2026-06-02",
+  "2026-06-07",
+  "2026-06-09",
+];
+
+const generatedTodayCalendarClasses = recurringScheduleDates.flatMap((dateKey) => {
+  const suffix = dateKey.replace(/-/g, "");
+  const day = new Date(`${dateKey}T12:00:00`).getDay();
+  if (day === 6) return saturdaySessions(dateKey, suffix);
+  if (day === 1) return [mondaySession(dateKey, suffix)];
+  return [];
+});
+
+export const todayCalendarClasses: TodayCalendarClass[] = [
+  ...baseTodayCalendarClasses,
+  ...generatedTodayCalendarClasses.filter(
+    (entry) => !baseTodayCalendarClasses.some((base) => base.id === entry.id),
+  ),
 ];
 
 export const monthlyFocus: MonthlyFocus = {

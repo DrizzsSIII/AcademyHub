@@ -1,7 +1,7 @@
 'use client'
 
 import { useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { academyTheme } from '@/lib/theme'
 import { monthlyFocus, todayCalendarClasses as classes } from '@/data/mock'
@@ -63,6 +63,22 @@ function fmtDayHeader(day: Date) {
   })
 }
 
+function fmtWeekRange(week: Date[]) {
+  if (week.length === 0) return ''
+  const start = week[0]
+  const end = week[week.length - 1]
+  const startLabel = start.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+  })
+  const endLabel = end.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  })
+  return `${startLabel} – ${endLabel}`
+}
+
 function timeRange(scheduledAt: string, duration: number) {
   const start = new Date(scheduledAt)
   const end = new Date(start.getTime() + duration * 60000)
@@ -100,24 +116,49 @@ export default function SchedulePage() {
   })
   const [openId, setOpenId] = useState<string | null>(null)
   const [focusExpanded, setFocusExpanded] = useState(false)
-  const [visibleWeekIdx, setVisibleWeekIdx] = useState(0)
+  const [visibleWeekIdx, setVisibleWeekIdx] = useState(WEEKS_BACK)
   const stripRef = useRef<HTMLDivElement>(null)
+  const hasScrolledToToday = useRef(false)
 
   const selectedClasses = classesOnDay(selected)
   const visibleWeek = weeks[visibleWeekIdx] ?? weeks[WEEKS_BACK] ?? []
   const visibleMonthDate = visibleWeek[3] ?? selected
   const visibleMonthLabel = monthYearLabel(visibleMonthDate)
+  const visibleWeekRange = fmtWeekRange(visibleWeek)
   const focusMatchesVisibleMonth = visibleMonthLabel === monthlyFocus.month
+  const canGoPrevWeek = visibleWeekIdx > 0
+  const canGoNextWeek = visibleWeekIdx < weeks.length - 1
 
   useLayoutEffect(() => {
     const strip = stripRef.current
     if (!strip) return
+
     const todayWeekIdx = weeks.findIndex((week) =>
       week.some((d) => sameDay(d, new Date()))
     )
     const initialIdx = todayWeekIdx >= 0 ? todayWeekIdx : WEEKS_BACK
-    strip.scrollLeft = initialIdx * strip.clientWidth
-    setVisibleWeekIdx(initialIdx)
+
+    const scrollToWeek = (idx: number) => {
+      if (!strip.clientWidth) return false
+      strip.scrollLeft = idx * strip.clientWidth
+      setVisibleWeekIdx(idx)
+      return true
+    }
+
+    if (scrollToWeek(initialIdx)) {
+      hasScrolledToToday.current = true
+      return
+    }
+
+    const observer = new ResizeObserver(() => {
+      if (hasScrolledToToday.current) return
+      if (scrollToWeek(initialIdx)) {
+        hasScrolledToToday.current = true
+        observer.disconnect()
+      }
+    })
+    observer.observe(strip)
+    return () => observer.disconnect()
   }, [weeks])
 
   function syncVisibleWeek() {
@@ -126,6 +167,17 @@ export default function SchedulePage() {
     const idx = Math.round(strip.scrollLeft / strip.clientWidth)
     const clamped = Math.max(0, Math.min(idx, weeks.length - 1))
     setVisibleWeekIdx(clamped)
+  }
+
+  function goWeek(delta: number) {
+    const strip = stripRef.current
+    if (!strip || !strip.clientWidth) return
+    const next = Math.max(0, Math.min(visibleWeekIdx + delta, weeks.length - 1))
+    strip.scrollTo({
+      left: next * strip.clientWidth,
+      behavior: 'smooth',
+    })
+    setVisibleWeekIdx(next)
   }
 
   function pickDay(day: Date) {
@@ -152,13 +204,56 @@ export default function SchedulePage() {
       `}</style>
 
       <div style={{
-        marginBottom: 16,
-        textAlign: 'center',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 8,
+        marginBottom: 8,
       }}>
-        <span style={{ fontSize: 16, fontWeight: 600,
-          color: '#1C1C1E' }}>
-          {visibleMonthLabel}
-        </span>
+        <button
+          type="button"
+          onClick={() => goWeek(-1)}
+          disabled={!canGoPrevWeek}
+          aria-label="Previous week"
+          style={{
+            background: 'none',
+            border: 'none',
+            cursor: canGoPrevWeek ? 'pointer' : 'default',
+            padding: 6,
+            borderRadius: 8,
+            color: canGoPrevWeek ? '#1C1C1E' : 'rgba(138,138,142,0.45)',
+            opacity: canGoPrevWeek ? 1 : 0.45,
+          }}
+        >
+          <ChevronLeft size={20} />
+        </button>
+        <div style={{ textAlign: 'center', minWidth: 0 }}>
+          <span style={{ display: 'block', fontSize: 16, fontWeight: 600,
+            color: '#1C1C1E' }}>
+            {visibleMonthLabel}
+          </span>
+          <span style={{ display: 'block', marginTop: 2, fontSize: 11,
+            color: '#8A8A8E' }}>
+            {visibleWeekRange}
+          </span>
+        </div>
+        <button
+          type="button"
+          onClick={() => goWeek(1)}
+          disabled={!canGoNextWeek}
+          aria-label="Next week"
+          style={{
+            background: 'none',
+            border: 'none',
+            cursor: canGoNextWeek ? 'pointer' : 'default',
+            padding: 6,
+            borderRadius: 8,
+            color: canGoNextWeek ? '#1C1C1E' : 'rgba(138,138,142,0.45)',
+            opacity: canGoNextWeek ? 1 : 0.45,
+          }}
+        >
+          <ChevronRight size={20} />
+        </button>
       </div>
 
       <div
@@ -167,11 +262,13 @@ export default function SchedulePage() {
         onScroll={syncVisibleWeek}
         style={{
           display: 'flex',
+          width: '100%',
           overflowX: 'auto',
           padding: '4px 0 12px',
           scrollbarWidth: 'none',
           WebkitOverflowScrolling: 'touch',
           scrollSnapType: 'x mandatory',
+          overscrollBehaviorX: 'contain',
         }}
       >
         {weeks.map((week, weekIdx) => (
